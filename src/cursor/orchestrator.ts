@@ -3,6 +3,10 @@ import type { CursorExecutionResult, CursorTask } from "./task.js";
 
 export type TaskState = "INIT" | "EXECUTING" | "EXECUTED" | "BLOCKED" | "ERROR";
 
+export interface CursorAdapter {
+  execute(task: CursorTask): Promise<CursorExecutionResult>;
+}
+
 export interface TaskExecution {
   state: TaskState;
   task: CursorTask;
@@ -10,12 +14,12 @@ export interface TaskExecution {
 }
 
 export interface CursorTaskOrchestratorOptions {
-  adapter?: CursorCliAdapter;
+  adapter?: CursorAdapter;
   onExecution?: (execution: TaskExecution) => Promise<void> | void;
 }
 
 export class CursorTaskOrchestrator {
-  private readonly adapter: CursorCliAdapter;
+  private readonly adapter: CursorAdapter;
   private readonly onExecution?: CursorTaskOrchestratorOptions["onExecution"];
 
   constructor(options: CursorTaskOrchestratorOptions = {}) {
